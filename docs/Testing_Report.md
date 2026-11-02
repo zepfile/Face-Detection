@@ -1,4 +1,4 @@
-﻿TESTING REPORT (PLACEHOLDER CONTENT)
+TESTING REPORT (PLACEHOLDER CONTENT)
 
 1. Test Strategy
 - Unit Testing: service-level logic validation

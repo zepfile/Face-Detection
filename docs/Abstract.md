@@ -1,4 +1,4 @@
-﻿ABSTRACT
+ABSTRACT
 
 Project Title: Face Detection Based Attendance System
 
