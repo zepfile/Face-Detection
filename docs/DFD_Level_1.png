@@ -1,0 +1,53 @@
+﻿DFD LEVEL 1 DESCRIPTION (PLACEHOLDER CONTENT)
+
+Process 1.0: Authentication and Authorization
+Inputs:
+- username, password
+- registration request (admin)
+Outputs:
+- JWT token
+- auth status/errors
+Data store used:
+- User data
+
+Process 2.0: Student Management
+Inputs:
+- add/update/delete student
+- student search/filter parameters
+Outputs:
+- student records
+- operation status
+Data store used:
+- Student data
+
+Process 3.0: Face Detection and Recognition
+Inputs:
+- camera frames
+- face encodings
+Outputs:
+- recognized student IDs with confidence
+Data store/file used:
+- Encodings model/data
+
+Process 4.0: Attendance Processing
+Inputs:
+- AI attendance payload
+- manual attendance request
+Outputs:
+- attendance save status
+- updated attendance entries
+Data store used:
+- Attendance data
+
+Process 5.0: Reporting and Summary
+Inputs:
+- date/student filters
+Outputs:
+- attendance list
+- present/absent summary
+Data store used:
+- Attendance + Student data
+
+Entity interactions:
+- Admin/Teacher interact with 1.0, 2.0, 4.0, 5.0
+- Camera/AI interacts with 3.0 and 4.0

@@ -1,0 +1,34 @@
+﻿DFD LEVEL 0 (CONTEXT DIAGRAM) DESCRIPTION (PLACEHOLDER CONTENT)
+
+External Entities:
+- Admin
+- Teacher
+- Camera/AI Source
+
+Central System:
+- Face Detection Attendance System
+
+Data Flows:
+1) Admin -> System
+- Login credentials
+- User/student management actions
+- Attendance queries and reports requests
+
+2) Teacher -> System
+- Login credentials
+- Attendance view/filter requests
+- Manual attendance marking
+
+3) Camera/AI Source -> System
+- Recognized student attendance events
+
+4) System -> Admin/Teacher
+- Authentication response
+- Student lists/details
+- Attendance records and summary reports
+
+5) System -> Database
+- Store/update users, students, attendance
+
+6) Database -> System
+- Requested data for authentication, management, reporting

@@ -1,0 +1,159 @@
+services:
+  mysql:
+    image: mysql:8.4.3
+    container_name: face-mysql
+    restart: unless-stopped
+    env_file:
+      - ../.env
+    environment:
+      # MySQL root password – Set this in .env (MYSQL_ROOT_PASSWORD)
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-abhinav!@nag9454}
+      # Database name – change in .env if needed (default: face_detection_db)
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-face_detection_db}
+      # MySQL application username – change in .env if needed (default: student-face)
+      MYSQL_USER: ${MYSQL_USER:-student-face}
+      # MySQL application password – MUST set in .env (MYSQL_PASSWORD)
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-abhinav!@nag9454}
+    ports:
+      - "${MYSQL_PORT:-3307}:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ../database:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 1g
+    cpus: 1.0
+    networks:
+      - face-detection-net
+
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    container_name: face-backend
+    restart: unless-stopped
+    env_file:
+      - ../.env
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL_DOCKER:-jdbc:mysql://mysql:3306/face_detection_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER:-student-face}
+      # Password – MUST match MYSQL_PASSWORD from MySQL service
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD:-abhinav!@nag9454}
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: ${SPRING_JPA_SHOW_SQL:-false}
+      JWT_SECRET: ${JWT_SECRET:-change-this-to-a-strong-secret-key}
+      JWT_ACCESS_EXPIRATION_MS: ${JWT_ACCESS_EXPIRATION_MS:-900000}
+      AI_API_KEY: ${AI_API_KEY:-change-this-ai-api-key}
+      APP_SECURITY_REQUIRE_HTTPS: ${APP_SECURITY_REQUIRE_HTTPS:-false}
+      APP_SECURITY_SECURE_COOKIES: ${APP_SECURITY_SECURE_COOKIES:-false}
+      APP_SECURITY_BCRYPT_STRENGTH: ${APP_SECURITY_BCRYPT_STRENGTH:-12}
+      APP_SECURITY_REFRESH_TOKEN_TTL_MS: ${APP_SECURITY_REFRESH_TOKEN_TTL_MS:-1209600000}
+      APP_SECURITY_ACCESS_TOKEN_TTL_MS: ${APP_SECURITY_ACCESS_TOKEN_TTL_MS:-900000}
+      APP_RATE_LIMIT_AUTH_REQUESTS_PER_MINUTE: ${APP_RATE_LIMIT_AUTH_REQUESTS_PER_MINUTE:-5}
+      NOTIFICATIONS_ENABLED: ${NOTIFICATIONS_ENABLED:-true}
+      NOTIFICATIONS_EMAIL_ENABLED: ${NOTIFICATIONS_EMAIL_ENABLED:-false}
+      NOTIFICATIONS_EMAIL_FROM: ${NOTIFICATIONS_EMAIL_FROM:-no-reply@face-detection.local}
+      NOTIFICATIONS_SMS_ENABLED: ${NOTIFICATIONS_SMS_ENABLED:-false}
+      NOTIFICATIONS_TWILIO_ACCOUNT_SID: ${NOTIFICATIONS_TWILIO_ACCOUNT_SID:-}
+      NOTIFICATIONS_TWILIO_AUTH_TOKEN: ${NOTIFICATIONS_TWILIO_AUTH_TOKEN:-}
+      NOTIFICATIONS_TWILIO_FROM_NUMBER: ${NOTIFICATIONS_TWILIO_FROM_NUMBER:-}
+      FRONTEND_ORIGIN: ${FRONTEND_ORIGIN:-http://localhost:3000}
+    ports:
+      - "8080:8080"
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /app/logs
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    mem_limit: 1g
+    cpus: 1.0
+    networks:
+      - face-detection-net
+
+  ai-service:
+    build:
+      context: ../ai-service
+      dockerfile: Dockerfile
+    container_name: face-ai-service
+    restart: unless-stopped
+    env_file:
+      - ../.env
+    depends_on:
+      - backend
+    environment:
+      BACKEND_URL: ${BACKEND_URL_DOCKER:-http://backend:8080}
+      BACKEND_VERIFY_SSL: ${BACKEND_VERIFY_SSL:-false}
+      BACKEND_API_KEY: ${AI_API_KEY:-change-this-ai-api-key}
+      CAMERA_ID: ${CAMERA_ID:-}
+      CAMERA_IDS: ${CAMERA_IDS:-}
+      ENCODINGS_PATH: /app/models/encodings.pkl
+      ATTENDANCE_INTERVAL: ${ATTENDANCE_INTERVAL:-10}
+      CONFIDENCE_THRESHOLD: ${CONFIDENCE_THRESHOLD:-0.6}
+      LIVE_STREAM_ENABLED: ${LIVE_STREAM_ENABLED:-true}
+      STREAM_HOST: 0.0.0.0
+      STREAM_PORT: "5000"
+      FRONTEND_ORIGIN: ${FRONTEND_ORIGIN:-http://localhost:3000}
+      OFFLINE_DB_PATH: /app/data/offline_attendance.db
+      OFFLINE_SYNC_INTERVAL: ${OFFLINE_SYNC_INTERVAL:-120}
+    volumes:
+      - ../ai-service/models:/app/models
+      - ../ai-service/dataset:/app/dataset
+      - ../ai-service/data:/app/data
+    ports:
+      - "5000:5000"
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    mem_limit: 1g
+    cpus: 1.0
+    networks:
+      - face-detection-net
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    container_name: face-frontend
+    restart: unless-stopped
+    env_file:
+      - ../.env
+    depends_on:
+      - backend
+    ports:
+      - "3000:8080"
+    read_only: true
+    tmpfs:
+      - /var/cache/nginx
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    mem_limit: 512m
+    cpus: 0.5
+    networks:
+      - face-detection-net
+
+volumes:
+  mysql_data:
+
+networks:
+  face-detection-net:
+    driver: bridge

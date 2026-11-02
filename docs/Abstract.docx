@@ -1,0 +1,13 @@
+﻿ABSTRACT
+
+Project Title: Face Detection Based Attendance System
+
+This project presents an automated attendance management platform that uses face detection and face recognition to reduce manual attendance effort in classrooms and institutions. Traditional attendance methods (paper registers, manual roll calls, or basic digital entries) are time-consuming, prone to errors, and difficult to audit at scale. The proposed system captures faces through a camera, recognizes registered students using precomputed face encodings, and automatically marks attendance in a centralized backend.
+
+The solution is built using a distributed architecture with three primary components: a Spring Boot backend API, a Python AI service, and a React frontend dashboard. The backend handles authentication, role-based authorization, student management, attendance records, and reporting. The AI service uses OpenCV and face_recognition libraries to process camera frames, detect faces, identify students, and send attendance events to the backend. The frontend provides an intuitive interface for login, student CRUD operations, attendance viewing, filtering, and manual corrections by authorized users.
+
+Core technologies include Java 17, Spring Boot 3.x, MySQL 8, Python 3.9, OpenCV, face_recognition, React, TypeScript, Axios, and Docker. JWT-based security is applied for protected API access. The project also includes deployment-oriented documentation for Raspberry Pi edge execution and systemd auto-start for continuous AI service operation.
+
+Key features include role-based access control (Admin/Teacher), automated attendance capture, manual attendance override, attendance summaries by date, student search and filtering, and containerized deployment using Docker Compose. The system improves operational efficiency, increases attendance data accuracy, and provides a scalable base for future enhancements such as liveness detection, multi-camera support, timetable integration, and analytics dashboards.
+
+In summary, the project demonstrates a practical and extensible approach to modern attendance automation by combining computer vision, web APIs, and a secure management dashboard.

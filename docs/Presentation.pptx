@@ -1,0 +1,74 @@
+﻿PRESENTATION OUTLINE (PLACEHOLDER CONTENT)
+
+Slide 1: Title Slide
+- Project title
+- Team members
+- Guide/supervisor
+- Institution
+
+Slide 2: Problem Statement
+- Issues with manual attendance
+- Need for automation and accuracy
+
+Slide 3: Objectives
+- Automate attendance via face recognition
+- Provide secure management dashboard
+- Enable reporting and manual override
+
+Slide 4: Technology Stack
+- Backend: Spring Boot, MySQL
+- AI: Python, OpenCV, face_recognition
+- Frontend: React, TypeScript, Vite
+- Deployment: Docker, Raspberry Pi
+
+Slide 5: System Architecture
+- Camera -> AI Service -> Backend -> Database -> Frontend
+- Data flow explanation
+
+Slide 6: Database and Core Models
+- User, Student, Attendance entities
+- Key relationships and constraints
+
+Slide 7: Backend API Highlights
+- Auth endpoints
+- Student management endpoints
+- Attendance and summary endpoints
+
+Slide 8: AI Service Workflow
+- Frame capture
+- Face detection
+- Recognition
+- Batched attendance push
+
+Slide 9: Frontend Highlights
+- Login and role-based access
+- Dashboard summary cards
+- Students CRUD and attendance pages
+
+Slide 10: Demo / Screenshots
+- Login screen
+- Dashboard
+- Students management
+- Attendance table and manual marking
+
+Slide 11: Testing and Results
+- Unit, integration, UAT summary
+- Observed outcomes and reliability
+
+Slide 12: Challenges and Learnings
+- Camera angle/light sensitivity
+- Model/data quality impacts
+- Security and integration lessons
+
+Slide 13: Future Scope
+- Liveness detection
+- Multi-camera support
+- Notifications and analytics
+- Timetable integration
+
+Slide 14: Demo Video Link
+- Add hosted demo URL/QR
+
+Slide 15: Conclusion and Q&A
+- Final summary
+- Thank you

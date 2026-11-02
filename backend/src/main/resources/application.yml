@@ -1,0 +1,95 @@
+server:
+  port: 8080
+  forward-headers-strategy: framework
+  error:
+    include-message: never
+    include-binding-errors: never
+    include-exception: false
+    include-stacktrace: never
+    whitelabel:
+      enabled: false
+  tomcat:
+    max-connections: 200
+    threads:
+      max: 200
+    max-http-form-post-size: 10MB
+    max-swallow-size: 10MB
+
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/face_detection_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
+    username: ${SPRING_DATASOURCE_USERNAME:root}
+    password: ${SPRING_DATASOURCE_PASSWORD:abhinav!@nag9454}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: ${SPRING_JPA_SHOW_SQL:false}
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        jdbc:
+          time_zone: UTC
+  mail:
+    host: ${SPRING_MAIL_HOST:}
+    port: ${SPRING_MAIL_PORT:587}
+    username: ${SPRING_MAIL_USERNAME:}
+    password: ${SPRING_MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+jwt:
+  secret: ${JWT_SECRET:change-this-to-a-long-random-secret-key-with-32-chars-plus}
+  secret-file: ${JWT_SECRET_FILE:}
+  access-expiration-ms: ${JWT_ACCESS_EXPIRATION_MS:900000}
+
+ai:
+  api-key: ${AI_API_KEY:change-this-to-a-long-random-ai-api-key}
+  api-key-file: ${AI_API_KEY_FILE:}
+
+app:
+  security:
+    require-https: ${APP_SECURITY_REQUIRE_HTTPS:false}
+    secure-cookies: ${APP_SECURITY_SECURE_COOKIES:false}
+    bcrypt-strength: ${APP_SECURITY_BCRYPT_STRENGTH:12}
+    max-failed-login-attempts: ${APP_SECURITY_MAX_FAILED_LOGIN_ATTEMPTS:5}
+    lock-duration-minutes: ${APP_SECURITY_LOCK_DURATION_MINUTES:15}
+    refresh-token-ttl-ms: ${APP_SECURITY_REFRESH_TOKEN_TTL_MS:1209600000}
+    access-token-ttl-ms: ${APP_SECURITY_ACCESS_TOKEN_TTL_MS:900000}
+  rate-limit:
+    auth-requests-per-minute: ${APP_RATE_LIMIT_AUTH_REQUESTS_PER_MINUTE:5}
+
+notifications:
+  enabled: ${NOTIFICATIONS_ENABLED:true}
+  email:
+    enabled: ${NOTIFICATIONS_EMAIL_ENABLED:true}
+    from: ${NOTIFICATIONS_EMAIL_FROM:no-reply@face-detection.local}
+  sms:
+    enabled: ${NOTIFICATIONS_SMS_ENABLED:false}
+  twilio:
+    account-sid: ${NOTIFICATIONS_TWILIO_ACCOUNT_SID:}
+    auth-token: ${NOTIFICATIONS_TWILIO_AUTH_TOKEN:}
+    from-number: ${NOTIFICATIONS_TWILIO_FROM_NUMBER:}
+
+logging:
+  level:
+    root: INFO
+    com.facedetection: INFO
+    org.springframework.security: INFO
+
+cors:
+  allowed-origins:
+    - ${FRONTEND_ORIGIN:http://localhost:5173}
+    - ${FRONTEND_ALT_ORIGIN:http://localhost:3000}
+    - http://127.0.0.1:5173
+    - http://127.0.0.1:3000
+    - ${AI_SERVICE_ORIGIN:http://localhost:5000}
+    - http://127.0.0.1:5000
